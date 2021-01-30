@@ -13,7 +13,7 @@ class ConversationException(Exception):
 class CurrencyConverter:
 
     @staticmethod
-    def convert_currency(message_parts: list[str, ...]) -> tuple[Union['str', 'float']]:
+    def convert_currency(message_parts: list[str, ...]) -> tuple[Union[str, float]]:
 
         # Base len check
 
