@@ -2,6 +2,7 @@
 import telebot
 from config import TOKEN, currency_dict
 from extensions import ConversationException, CurrencyConverter
+from math import floor
 
 
 bot = telebot.TeleBot(TOKEN)
@@ -21,6 +22,7 @@ def help_message(message: telebot.types.Message):
 
 @bot.message_handler(commands=['values'])
 def values_information(message: telebot.types.Message):
+
     message_text = 'Список всех доступных валют:\n'
 
     for key in currency_dict:
@@ -54,7 +56,7 @@ def convert_currency(message: telebot.types.Message):
 
         bot_message = (
             f'{primal_amount} {readable_convert_from} ({currency_dict[convert_from]}) = ' +
-            f'{converted_amount} {readable_convert_to} ({currency_dict[convert_to]})'
+            f'{floor(converted_amount)} {readable_convert_to} ({currency_dict[convert_to]})'
         )
 
         bot.send_message(message.chat.id, bot_message)

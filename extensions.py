@@ -12,6 +12,50 @@ class ConversationException(Exception):
 
 class CurrencyConverter:
 
+    readable_words = {
+
+        'Рубль': {
+            0: 'Рублей',
+            1: 'Рубль'
+        },
+
+        'Доллар': {
+            0: 'Долларов',
+            1: 'Доллар'
+        },
+
+        'Евро': {
+            i: 'Евро' for i in range(10)
+        },
+
+        'Penny': {
+            0: 'копеек',
+            1: 'копейка'
+        },
+
+        'Cent': {
+            0: 'центов',
+            1: 'цент'
+        }
+    }
+
+    for i in range(2, 5):
+
+        readable_words['Доллар'].update({i: 'Доллара'})
+        readable_words['Рубль'].update({i: 'Рубля'})
+
+        readable_words['Penny'].update({i: 'копейки'})
+        readable_words['Cent'].update({i: 'цента'})
+
+    for i in range(5, 10):
+
+        readable_words['Доллар'].update({i: 'Долларов'})
+        readable_words['Рубль'].update({i: 'Рублей'})
+
+        readable_words['Penny'].update({i: 'копеек'})
+        readable_words['Cent'].update({i: 'центов'})
+
+
     @staticmethod
     def convert_currency(message_parts: list[str, ...]) -> tuple[Union[str, float]]:
 
@@ -67,29 +111,17 @@ class CurrencyConverter:
     @staticmethod
     def make_readable(convert_from: str, convert_to: str, primal_amount: int, converted_amount: int) -> tuple[str, ...]:
 
-        readable_words = {
-            'Доллар': {
-                0: 'Долларов',
-                1: 'Доллар'
-            },
+        primal_convert_to = 'Penny' if currency_dict[convert_to] == 'RUB' else 'Cent'
 
-            'Рубль': {
-                0: 'Рублей',
-                1: 'Рубль'
-            },
+        convert_from = CurrencyConverter.readable_words[convert_from][primal_amount % 10]
+        convert_to = CurrencyConverter.readable_words[convert_to][int(converted_amount) % 10]
 
-            'Евро': {
-                i: 'Евро' for i in range(10)
-            }
-        }
+        while int(converted_amount) != converted_amount:
+            converted_amount *= 10
 
-        readable_words['Доллар'].update({i: 'Доллара' for i in range(2, 5)})
-        readable_words['Доллар'].update({i: 'Долларов' for i in range(5, 10)})
-
-        readable_words['Рубль'].update({i: 'Рубля' for i in range(2, 5)})
-        readable_words['Рубль'].update({i: 'Рублей' for i in range(5, 10)})
-
-        convert_from = readable_words[convert_from][primal_amount % 10]
-        convert_to = readable_words[convert_to][int(converted_amount) % 10]
+        convert_to += (
+            f' {int(converted_amount % 100)}' +
+            f' {CurrencyConverter.readable_words[primal_convert_to][int(converted_amount) % 10]}'
+        )
 
         return convert_from, convert_to
