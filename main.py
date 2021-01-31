@@ -13,15 +13,31 @@ def help_message(message: telebot.types.Message):
 
     text = (
         'Чтобы использовать бота, введите данные в следующем формате:\n\n' +
-        '<имя валюты> <в какую валюту перевести> <количество валюты>\n\n' +
+        '<имя валюты> <в какую валюту перевести>\n\n' +
+        'расположение количества валюты не имеет значения, в отличие от названий валют' +
+        'для конкретных примеров: /examples\n\n'
         'Список всех доступных валют: /values'
     )
 
     bot.send_message(message.chat.id, text)
 
 
+@bot.message_handler(commands=['examples'])
+def currency_input_examples(message: telebot.types.Message):
+
+    currency_input_example = (
+        'Ввод данных поддерживается в таких форматах: \n\n' +
+        '<количество валюты> <валюта, из которой хотим перевести> <валюта, в которую хотим перевести>\n\n' +
+        '<валюта, из которой хотим перевести> <количество валюты> <валюта, в которую хотим перевести>\n\n' +
+        '<валюта, из которой хотим перевести> <валюта, в которую хотим перевести> <количество валюты>\n\n' +
+        'Также, все данные необходимо разделять пробелом'
+    )
+
+    bot.send_message(message.chat.id, currency_input_example)
+
+
 @bot.message_handler(commands=['values'])
-def values_information(message: telebot.types.Message):
+def currency_information(message: telebot.types.Message):
 
     message_text = 'Список всех доступных валют:\n'
 
@@ -47,7 +63,11 @@ def convert_currency(message: telebot.types.Message):
 
     else:
 
-        primal_amount = int(message_parts[2])
+        for index, element in enumerate(message_parts):
+            if element.isdigit():
+                break
+
+        primal_amount = int(message_parts[index])
 
         readable_convert_from, readable_convert_to = CurrencyConverter.make_readable(
             convert_from, convert_to,

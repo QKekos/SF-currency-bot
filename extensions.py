@@ -67,6 +67,14 @@ class CurrencyConverter:
         elif len(message_parts) > 3:
             raise ConversationException('Слишком много аргументов')
 
+        # Standardization amount permutations
+
+        if message_parts[0].isdigit():
+            message_parts = [message_parts[1], message_parts[2], message_parts[0]]
+
+        elif message_parts[1].isdigit():
+            message_parts = [message_parts[0], message_parts[2], message_parts[1]]
+
         # Primal values
 
         convert_from = message_parts[0]
